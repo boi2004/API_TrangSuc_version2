@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-public class LoginRequest
+namespace API_TrangSuc_vs2.Modules.Authentication.Models
 {
-    [Required(ErrorMessage = "Tên đăng nhập không được để trống.")]
-    public string Username { get; set; }
+    public class LoginRequest
+    {
+        [Required(ErrorMessage = "Email không được để trống")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        public string Email { get; set; }  // Email của người dùng khi đăng nhập
 
-    [Required(ErrorMessage = "Mật khẩu không được để trống.")]
-    public string Password { get; set; }
-
-    public bool RememberMe { get; set; } = false;
+        [Required(ErrorMessage = "Mật khẩu không được để trống")]
+        public string Password { get; set; }  // Mật khẩu của người dùng khi đăng nhập
+    }
 }

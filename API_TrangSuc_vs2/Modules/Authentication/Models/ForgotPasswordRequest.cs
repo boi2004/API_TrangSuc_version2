@@ -1,7 +1,11 @@
-﻿namespace Driver_Company_5._0.Modules.Authentication.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace API_TrangSuc_vs2.Modules.Authentication.Models
 {
     public class ForgotPasswordRequest
     {
-        public string Email { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Email không được để trống")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        public string Email { get; set; }  // Email để gửi mã đặt lại mật khẩu
     }
 }

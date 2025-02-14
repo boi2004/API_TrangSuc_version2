@@ -1,11 +1,11 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Driver_Company_5._0.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
 
-namespace Driver_Company_5._0.Modules.Authentication.Security
+namespace API_TrangSuc_vs2.Modules.Authentication.Security
 {
     public class JwtHelper
     {
@@ -16,34 +16,23 @@ namespace Driver_Company_5._0.Modules.Authentication.Security
             _configuration = configuration;
         }
 
-        /// <summary>
-        /// Tạo JWT Token
-        /// </summary>
-        public string GenerateJwtToken(User user, TimeSpan tokenLifetime)
+        public string GenerateJwtToken(IdentityUser user)
         {
-            if (user == null)
-                throw new ArgumentNullException(nameof(user), "User information cannot be null");
+            var jwtSettings = _configuration.GetSection("Jwt");
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
 
-            var secretKey = _configuration["Jwt:Key"];
-            var issuer = _configuration["Jwt:Issuer"];
-            var audience = _configuration["Jwt:Audience"];
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
+            var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-              
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
 
             var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
+                issuer: jwtSettings["Issuer"],
+                audience: jwtSettings["Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.Add(tokenLifetime),
-                signingCredentials: credentials);
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

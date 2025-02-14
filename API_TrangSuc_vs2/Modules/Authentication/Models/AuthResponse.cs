@@ -1,4 +1,4 @@
-﻿namespace Driver_Company_5._0.Modules.Authentication.Models
+﻿namespace API_TrangSuc_vs2.Modules.Authentication.Models
 {
     public class AuthResponse
     {
