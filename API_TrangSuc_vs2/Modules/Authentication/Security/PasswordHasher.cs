@@ -1,21 +1,19 @@
-﻿using BCrypt.Net;
+﻿using Microsoft.AspNetCore.Identity;
 
-namespace Driver_Company_5._0.Modules.Authentication.Security
+namespace API_TrangSuc_vs2.Modules.Authentication.Security
 {
-    public static class PasswordHasher
+    public class PasswordHasher
     {
-        // Mã hóa mật khẩu
-        public static string HashPassword(string password, int workFactor = 12)  //workFactor = 12: Tăng số vòng lặp để cải thiện độ mạnh của mã hóa, mặc dù sẽ chậm hơn.
+        private readonly IPasswordHasher<IdentityUser> _passwordHasher;
 
+        public PasswordHasher(IPasswordHasher<IdentityUser> passwordHasher)
         {
-            return BCrypt.Net.BCrypt.HashPassword(password, workFactor);
+            _passwordHasher = passwordHasher;
         }
 
-
-        // Xác thực mật khẩu
-        public static bool VerifyPassword(string password, string hashedPassword)
+        public string HashPassword(IdentityUser user, string password)
         {
-            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+            return _passwordHasher.HashPassword(user, password);  // Mã hóa mật khẩu trước khi lưu
         }
     }
 }
